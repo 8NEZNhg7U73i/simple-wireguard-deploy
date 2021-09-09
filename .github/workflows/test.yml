@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 env:
-  SSH_ACTIONS: true
+  SSH_ACTIONS: false
   moon: true
 
   # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -81,7 +81,7 @@ jobs:
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@main
       if: env.SSH_ACTIONS == 'true'
-      
+
     - name: run machine by tail
-      #if: env.SSH_ACTIONS == 'false'
+      if: env.SSH_ACTIONS == 'false'
       run: tail -f /dev/null
