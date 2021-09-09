@@ -10,6 +10,7 @@ on:
 
 env:
   SSH_ACTIONS: true
+  moon: true
 
   # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -24,6 +25,16 @@ jobs:
     # Runs a single command using the runners shell
     - name: Install wireguard
       run: sudo apt-get install wireguard
+
+    - name: Install zerotier one
+      run: curl -s https://install.zerotier.com | sudo bash
+
+    - name: join network Id
+      run: sudo zerotier-cli join ${{ secrets.NETWORK_ID }}
+
+    - name: orbit moon
+      if: env.moon == 'true'
+      run: sudo zerotier-cli orbit ${{ secrets.MOON_ID }} ${{ secrets.MOON_ID }}
 
     - name: Update system
       run: |
@@ -67,10 +78,10 @@ jobs:
         sudo chmod o-rwx -R /root
         sudo chmod g-rwx -R /root
 
-    - name: run machine by tail
-      if: env.SSH_ACTIONS == 'false'
-      run: tail -f /dev/null
-
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@main
       if: env.SSH_ACTIONS == 'true'
+      
+    - name: run machine by tail
+      #if: env.SSH_ACTIONS == 'false'
+      run: tail -f /dev/null
