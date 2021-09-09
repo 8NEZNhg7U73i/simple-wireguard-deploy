@@ -36,7 +36,7 @@ jobs:
       run: |
         sed -i -e "s@{{WIREGUARD_PRIVATE_KEY}}@${{ secrets.WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
         sed -i -e "s@{{WIREGUARD_SERVER_PUBLIC_KEY}}@${{ secrets.WIREGUARD_SERVER_PUBLIC_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{WIREGUARD_PRESHARED_KEY}}@${{ secrets.WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+        #sed -i -e "s@{{WIREGUARD_PRESHARED_KEY}}@${{ secrets.WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
         sed -i -e "s@{{WIREGUARD_SERVER_ENDPOINT}}@${{ secrets.WIREGUARD_SERVER_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
         sed -i -e "s@{{WIREGUARD_ADDRESS}}@${{ secrets.WIREGUARD_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
         sed -i -e "s@{{WIREGUARD_ALLOWEDIPS}}@${{ secrets.WIREGUARD_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
