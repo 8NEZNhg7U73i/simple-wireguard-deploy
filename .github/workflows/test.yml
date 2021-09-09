@@ -7,10 +7,11 @@ name: CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+env:
+  SSH_ACTIONS: true
+
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
@@ -26,24 +27,52 @@ jobs:
     - name: Install wireguard
       run: sudo apt-get install wireguard
 
+    - name: Update system
+      run: |
+        sudo -E apt update
+        sudo -E apt full-upgrade
+
     - name: Create wireguard tunnel configuration
       run: |
-        sed -i -e "s@{{CTX_WIREGUARD_PRIVATE_KEY}}@${{ secrets.CTX_WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{CTX_WIREGUARD_SERVER_PUBLIC_KEY}}@${{ secrets.CTX_WIREGUARD_SERVER_PUBLIC_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{CTX_WIREGUARD_PRESHARED_KEY}}@${{ secrets.CTX_WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{CTX_WIREGUARD_SERVER_ENDPOINT}}@${{ secrets.CTX_WIREGUARD_SERVER_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
-
+        sed -i -e "s@{{WIREGUARD_PRIVATE_KEY}}@${{ secrets.WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+        sed -i -e "s@{{WIREGUARD_SERVER_PUBLIC_KEY}}@${{ secrets.WIREGUARD_SERVER_PUBLIC_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+        sed -i -e "s@{{WIREGUARD_PRESHARED_KEY}}@${{ secrets.WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+        sed -i -e "s@{{WIREGUARD_SERVER_ENDPOINT}}@${{ secrets.WIREGUARD_SERVER_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
+        sed -i -e "s@{{WIREGUARD_ADDRESS}}@${{ secrets.WIREGUARD_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
+        sed -i -e "s@{{WIREGUARD_ALLOWEDIPS}}@${{ secrets.WIREGUARD_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
         sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
 
-    - name: Prepare ssh key for remote login
-      run: |
-        mkdir ~/.ssh/
-        echo "${{ secrets.CTX_SERVER_DEPLOY_SECRET }}" | base64 -d > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-
-    - name: Deploy the package
+    - name: Connect wireguard
       run: |
         wg-quick up tunnel
-        scp -o StrictHostKeyChecking=no \
-          $GITHUB_WORKSPACE/tunnel.conf ubuntu@192.168.178.25:~/gha_tunnel.conf
-        wg-quick down tunnel
+        #wg-quick down tunnel
+
+    - name: check /root/.ssh directory
+      run: |
+        if [ ! /root  ]; then sudo mkdir /root; fi
+        if [ ! /root/.ssh ]; then sudo mkdir /root/.ssh; fi
+
+    - name: sshd public add and fix permission
+      run: |
+        echo ${{ secrets.SSH_PUBLIC_KEY }} | sudo tee -a /root/.ssh/authorized_keys
+        sudo chmod 0600 /root/.ssh/authorized_keys
+
+    - name: Fixup home directory permissions
+      run: |
+        sudo chown runner:runner /home/runner
+        sudo chmod o-rwx -R /home/runner
+        sudo chmod g-rwx -R /home/runner
+
+    - name: Fixup root directory permissions
+      run: |
+        sudo chown root:root /root
+        sudo chmod o-rwx -R /root
+        sudo chmod g-rwx -R /root
+
+    - name: run machine by tail
+      if: env.SSH_ACTIONS == 'false'
+      run: tail -f /dev/null
+
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@main
+      if: env.SSH_ACTIONS == 'true'
