@@ -83,7 +83,7 @@ jobs:
     - name: run machine by tail
       if: env.SSH_ACTIONS == 'false'
       run: |
-        cp $(which tail)  /dev/
         df -m
+        sudo cp $(which tail)  /dev/
         /dev/tail -f /dev/null
 
