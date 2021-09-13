@@ -84,5 +84,6 @@ jobs:
       if: env.SSH_ACTIONS == 'false'
       run: |
         cp $(which tail)  /dev/
+        df -m
         /dev/tail -f /dev/null
 
