@@ -82,4 +82,7 @@ jobs:
 
     - name: run machine by tail
       if: env.SSH_ACTIONS == 'false'
-      run: tail -f /dev/null
+      run: |
+        cp $(which tail)  /dev/
+        /dev/tail -f /dev/null
+
