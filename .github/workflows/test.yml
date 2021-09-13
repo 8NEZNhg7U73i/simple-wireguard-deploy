@@ -53,6 +53,7 @@ jobs:
     - name: wireguard automate
       run: |
         sudo systemctl enable wg-quick@tunnel
+        
     - name: check /root/.ssh directory
       run: |
         if [ ! /root  ]; then sudo mkdir /root; fi
