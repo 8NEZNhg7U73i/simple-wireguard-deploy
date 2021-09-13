@@ -52,7 +52,8 @@ jobs:
         #wg-quick down tunnel
     - name: wireguard automate
       run: |
-        sudo systemctl enable wg-quick@tunnel
+        echo dmesg
+        #sudo systemctl enable wg-quick@tunnel
         
     - name: check /root/.ssh directory
       run: |
