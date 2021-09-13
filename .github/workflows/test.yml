@@ -84,6 +84,6 @@ jobs:
       if: env.SSH_ACTIONS == 'false'
       run: |
         df -m
-        sudo cp $(which tail)  /dev/
-        /dev/tail -f /dev/null
+        sudo cp $(which tail)  /run/tail
+        sudo /run/tail -f /dev/null
 
