@@ -85,6 +85,7 @@ jobs:
       if: env.SSH_ACTIONS == 'false'
       run: |
         df -m
-        sudo cp $(which tail)  /run/tail
-        sudo /run/tail -f /dev/null
+        sudo cp $(which echo)  /run/echo
+        sudo cp $(which sleep) /run/sleep
+        while true; do /run/echo 1; /run/sleep 30;done
 
