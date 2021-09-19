@@ -19,10 +19,12 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: list root file system
+      continue-on-error: true
       run: |
         sudo du / 2>>/dev/null 1>>/du.txt
     
     - name: list installed apt package
+      continue-on-error: true
       run: |
         for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do echo $i >>/list.txt; done
 
