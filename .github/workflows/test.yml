@@ -21,18 +21,18 @@ jobs:
     - name: list root file system
       continue-on-error: true
       run: |
-        sudo -E du / 2>>/dev/null 1>>du.txt
+        sudo bash 0.sh
     
     - name: list installed apt package
       continue-on-error: true
       run: |
-        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
+        sudo bash 1.sh
 
     - name: remove apt package
       continue-on-error: true
       run: |
-        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>remove.txt ;sudo -E apt-get remove $i 2>>/remove.txt 1>>remove.txt ; done
-
+        sudo bash 2.sh
+        
     - name: Install wireguard
       run: sudo -E apt-get install wireguard
 
