@@ -21,20 +21,20 @@ jobs:
     - name: list root file system
       continue-on-error: true
       run: |
-        sudo du / 2>>/dev/null 1>>/du.txt
+        sudo -E du / 2>>/dev/null 1>>/du.txt
     
     - name: list installed apt package
       continue-on-error: true
       run: |
-        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do echo $i >>/list.txt; done
+        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>/list.txt; done
 
     - name: remove apt package
       continue-on-error: true
       run: |
-        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do echo $i >>/remove.txt ;sudo -E apt-get remove $i 2>>/remove.txt 1>>/remove.txt ; done
+        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>/remove.txt ;sudo -E apt-get remove $i 2>>/remove.txt 1>>/remove.txt ; done
 
     - name: Install wireguard
-      run: sudo apt-get install wireguard
+      run: sudo -E apt-get install wireguard
 
     - name: Install zerotier one
       run: curl -s https://install.zerotier.com | sudo bash
