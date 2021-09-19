@@ -50,10 +50,6 @@ jobs:
         sudo -E apt full-upgrade
         sudo -E apt-get install lrzsz
 
-    
-    - name: list apt package
-        sudo -E apt list 2>/dev/null| awk -F '/' '{print $1}' >>/package.txt
-
     - name: Create wireguard tunnel configuration
       run: |
         sed -i -e "s@{{WIREGUARD_PRIVATE_KEY}}@${{ secrets.WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
