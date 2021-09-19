@@ -10,6 +10,7 @@ on:
 env:
   SSH_ACTIONS: false
   moon: true
+  auto_wireguard: false
 
 jobs:
   build:
@@ -17,6 +18,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: list root file system
+      run: |
+        sudo du / 2>>/dev/null 1>>/du.txt
+    
+    - name: list installed apt package
+      run: |
+        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do echo $i >>/list.txt; done
+
+    - name: remove apt package
+      continue-on-error: true
+      run: |
+        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do echo $i >>/remove.txt ;sudo -E apt-get remove $i 2>>/remove.txt 1>>/remove.txt ; done
 
     - name: Install wireguard
       run: sudo apt-get install wireguard
@@ -35,6 +49,11 @@ jobs:
       run: |
         sudo -E apt update
         sudo -E apt full-upgrade
+        sudo -E apt-get install lrzsz
+
+    
+    - name: list apt package
+        sudo -E apt list 2>/dev/null| awk -F '/' '{print $1}' >>/package.txt
 
     - name: Create wireguard tunnel configuration
       run: |
@@ -50,10 +69,12 @@ jobs:
       run: |
         wg-quick up tunnel
         #wg-quick down tunnel
+
     - name: wireguard automate
+      if: env.auto_wireguard == 'true'
       run: |
         echo dmesg
-        #sudo systemctl enable wg-quick@tunnel
+        sudo systemctl enable wg-quick@tunnel
         
     - name: check /root/.ssh directory
       run: |
@@ -88,4 +109,4 @@ jobs:
         sudo cp $(which echo)  /run/echo
         sudo cp $(which sleep) /run/sleep
         while true; do /run/echo 1; /run/sleep 30;done
-
+      continue-on-error: true
