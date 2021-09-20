@@ -10,6 +10,7 @@ env:
   SSH_ACTIONS: false
   moon: true
   auto_wireguard: false
+  auto_test: false
 
 jobs:
   build:
@@ -30,9 +31,10 @@ jobs:
 
     - name: remove apt package
       continue-on-error: true
+      if: env.auto_test == 'true'
       run: |
         sudo bash 2.sh
-        
+
     - name: Install wireguard
       run: sudo -E apt-get install wireguard
 
