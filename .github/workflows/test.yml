@@ -22,12 +22,17 @@ jobs:
     - name: list root file system
       continue-on-error: true
       run: |
-        sudo bash 0.sh
+        sudo -E du -x / 2>>/dev/null 1>>du.txt
     
     - name: list installed apt package
       continue-on-error: true
       run: |
-        sudo bash 1.sh
+        for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
+
+    - name: get apt-cache show package
+      run: | 
+        mkdir show_dir
+        for i in $(cat list.txt); do sudo -E apt-cache show $i >>./show_dir/$i.txt ;done
 
     - name: remove apt package
       continue-on-error: true
