@@ -8,7 +8,7 @@ on:
 
 env:
   SSH_ACTIONS: false
-  moon: true
+  moon: false
   auto_wireguard: false
   auto_test: false
 
@@ -31,8 +31,14 @@ jobs:
 
     - name: get apt-cache show package
       run: | 
-        mkdir show_dir
-        for i in $(cat list.txt); do sudo -E apt-cache show $i >>./show_dir/$i.txt ;done
+        mkdir show
+        mkdir showpkg
+        mkdir rdepends
+        mkdir depends
+        for i in $(cat list.txt); do sudo -E apt-cache show $i >>./show/$i.txt ;done        
+        for i in $(cat list.txt); do sudo -E apt-cache showpkg $i >>./showpkg/$i.txt ;done
+        for i in $(cat list.txt); do sudo -E apt-cache rdepends $i >>./rdepends/$i.txt ;done
+        for i in $(cat list.txt); do sudo -E apt-cache depends $i >>./depends/$i.txt ;done
 
     - name: remove apt package
       continue-on-error: true
@@ -112,5 +118,5 @@ jobs:
         df -m
         sudo cp $(which echo)  /run/echo
         sudo cp $(which sleep) /run/sleep
-        while true; do /run/echo 1; /run/sleep 30;done
+        while true; do /run/sleep 30;done
       continue-on-error: true
