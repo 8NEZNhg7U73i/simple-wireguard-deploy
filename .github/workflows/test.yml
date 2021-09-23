@@ -11,6 +11,7 @@ env:
   moon: false
   auto_wireguard: false
   auto_test: false
+  all_test: false
 
 jobs:
   build:
@@ -21,6 +22,7 @@ jobs:
     
     - name: list root file system
       continue-on-error: true
+      if: env.all_test == 'true'
       run: |
         sudo -E du -x / 2>>/dev/null 1>>du.txt
     
