@@ -57,6 +57,7 @@ mkdir /root/out/rdepends
 mkdir /root/out/depends
 du -x / 2>>/dev/null 1>>/root/out/du.txt
 list
-for i in show showpkg depends rdepends list_mod essential; do
+show
+for i in showpkg depends rdepends list_mod essential; do
     $i &
 done
