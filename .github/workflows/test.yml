@@ -119,4 +119,3 @@ jobs:
         sudo cp $(which echo)  /run/echo
         sudo cp $(which sleep) /run/sleep
         while true; do /run/sleep 30;done
-      continue-on-error: true
