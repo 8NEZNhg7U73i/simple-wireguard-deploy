@@ -28,7 +28,7 @@ jobs:
       continue-on-error: true
       run: |
         for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
-        for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list1.txt; done
+        for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list_mod.txt; done
 
     - name: get apt-cache show package
       run: | 
@@ -36,10 +36,10 @@ jobs:
         mkdir showpkg
         mkdir rdepends
         mkdir depends
-        for i in $(cat list.txt); do sudo -E apt-cache show $i >>./show/$i.txt ;done        
-        for i in $(cat list.txt); do sudo -E apt-cache showpkg $i >>./showpkg/$i.txt ;done
-        for i in $(cat list.txt); do sudo -E apt-cache rdepends $i >>./rdepends/$i.txt ;done
-        for i in $(cat list.txt); do sudo -E apt-cache depends $i >>./depends/$i.txt ;done
+        for i in $(cat list.txt); do sudo -E apt-cache show $i 2>>/dev/null >>./show/$i.txt ;done        
+        for i in $(cat list.txt); do sudo -E apt-cache showpkg $i 2>>/dev/null >>./showpkg/$i.txt ;done
+        for i in $(cat list.txt); do sudo -E apt-cache rdepends $i 2>>/dev/null >>./rdepends/$i.txt ;done
+        for i in $(cat list.txt); do sudo -E apt-cache depends $i 2>>/dev/null >>./depends/$i.txt ;done
 
     - name: remove apt package
       continue-on-error: true
