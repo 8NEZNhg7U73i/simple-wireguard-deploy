@@ -21,4 +21,8 @@ show() {
         )
     done
 }
+mkdir show
+mkdir showpkg
+mkdir rdepends
+mkdir depends
 show
