@@ -10,12 +10,11 @@ show() {
         (
             IFS=$'\n'
             for j in $(cat /root/out/show/$i.txt); do
-                temp=$(echo $j | grep -x "Essential: yes")
-                if [ "$temp" == "Essential: yes" ]; then
+                if [ "$(echo $j | grep -x "Essential: yes")" == "Essential: yes" ]; then
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
                     break
                 fi
-                if [ "$temp" == "Priority: required" ]; then
+                if [ "$(echo $j | grep -x "Priority: required")" == "Priority: required" ]; then
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
                     break
                 fi
