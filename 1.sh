@@ -18,6 +18,10 @@ show() {
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
                     break
                 fi
+                if [ "$(echo $j | grep -x "Build-Essential: yes")" == "Priority: required" ]; then
+                    echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
+                    break
+                fi
             done
         )
     done
