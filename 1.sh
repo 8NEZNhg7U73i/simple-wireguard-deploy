@@ -9,7 +9,7 @@ show() {
         echo $i,$(echo $i | grep -o "-" | grep -c "-") 2>>/dev/stdout >>/root/out/list_mod.txt
         (
             IFS=$'\n'
-            for j in $(cat ./show/$i.txt); do
+            for j in $(cat /root/out/show/$i.txt); do
                 temp=$(echo $j | grep -x "Essential: yes")
                 if [ "$temp" == "Essential: yes" ]; then
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt

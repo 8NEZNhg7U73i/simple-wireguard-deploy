@@ -65,6 +65,7 @@ jobs:
       run: sudo zerotier-cli orbit ${{ secrets.MOON_ID }} ${{ secrets.MOON_ID }}
 
     - name: Update system
+      if: env.update_system == 'true'
       run: |
         sudo -E apt update
         sudo -E apt full-upgrade
