@@ -18,7 +18,7 @@ show() {
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
                     break
                 fi
-                if [ "$(echo $j | grep -x "Build-Essential: yes")" == "Priority: required" ]; then
+                if [ "$(echo $j | grep -x "Build-Essential: yes")" == "Build-Essential: yes" ]; then
                     echo "$i" 2>>/dev/stdout >>/root/out/essential.txt
                     break
                 fi
