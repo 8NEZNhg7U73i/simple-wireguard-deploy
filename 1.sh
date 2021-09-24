@@ -62,9 +62,7 @@ for i in showpkg depends rdepends list_mod; do
     $i &
 done
 essential
-for i in $(cat essential.txt); do
+for i in $(cat /root/out/essential.txt); do
     echo "$i"
     sed -i ':a;N;$!ba;s/'$i'\n//g' /root/out/list.txt
 done
-docker rm -vf $(docker ps -a -q)
-docker rmi -f $(docker images -a -q)

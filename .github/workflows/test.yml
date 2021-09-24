@@ -52,9 +52,7 @@ jobs:
 
       - name: remove docker images
         if: env.auto_test == 'true'
-        run: |
-          #sudo -E docker rm -vf $(docker ps -a -q)
-          sudo -E docker rmi -f $(docker images -a -q)
+        run: sudo docker rmi -f $(docker images -a -q)
 
       - name: remove *ghc* *azure* *google* *firefox* *dotnet* *hvm* *snapd* *llvm* *moby* *php*
         if: env.auto_test == 'true'
