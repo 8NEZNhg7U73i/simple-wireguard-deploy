@@ -10,6 +10,7 @@ env:
   auto_wireguard: false
   auto_test: false
   all_test: false
+  remove_all_package: false
 
 jobs:
   build:
@@ -45,9 +46,59 @@ jobs:
 
       - name: remove apt package
         continue-on-error: true
-        if: env.auto_test == 'true'
+        if: env.remove_all_package == 'true'
         run: |
           sudo bash 2.sh
+
+      - name: remove docker images
+        if: env.auto_test == 'true'
+        run: |
+          #sudo -E docker rm -vf $(docker ps -a -q)
+          sudo -E docker rmi -f $(docker images -a -q)
+
+      - name: remove *ghc* *azure* *google* *firefox* *dotnet* *hvm* *snapd* *llvm* *moby* *php*
+        if: env.auto_test == 'true'
+        run: sudo apt-get purge -y *ghc* *azure* *google* *firefox* *dotnet* *hvm* *snapd* *llvm* *moby* *php*
+
+      - name: remove /usr/local/lib/android
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/local/lib/android
+
+      - name: remove /usr/share/dotnet
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/share/dotnet
+
+      - name: remove /opt/hostedtoolcache
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /opt/hostedtoolcache
+
+      - name: remove /usr/local/.ghcup
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/local/.ghcup
+
+      - name: remove /usr/share/swift
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/share/swift
+
+      - name: remove /home/linuxbrew
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /home/linuxbrew
+
+      - name: remove /usr/local/graalvm
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/local/graalvm
+
+      - name: remove /usr/local/lib/node_modules
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/local/lib/node_modules
+
+      - name: remove /opt/pipx/venvs
+        if: env.auto_test =='true'
+        run: sudo rm -rf /opt/pipx/venvs
+
+      - name: remove /usr/share/rust
+        if: env.auto_test == 'true'
+        run: sudo rm -rf /usr/share/rust
 
       - name: Install wireguard
         run: sudo -E apt-get install wireguard openresolv

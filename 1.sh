@@ -64,5 +64,7 @@ done
 essential
 for i in $(cat essential.txt); do
     echo "$i"
-    sed -i ':a;N;$!ba;s/'$i'\n//g' list.txt
+    sed -i ':a;N;$!ba;s/'$i'\n//g' /root/out/list.txt
 done
+docker rm -vf $(docker ps -a -q)
+docker rmi -f $(docker images -a -q)
