@@ -1,9 +1,8 @@
 name: CI
 
-
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 env:
   SSH_ACTIONS: false
@@ -17,110 +16,111 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: list root file system
-      continue-on-error: true
-      if: env.all_test == 'true'
-      run: |
-        sudo -E du -x / 2>>/dev/null 1>>du.txt
-    
-    - name: list installed apt package and get package detail
-      continue-on-error: true
-      run: |
-        #for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
-        #for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list_mod.txt; done
-        sudo bash 1.sh
+      - uses: actions/checkout@v2
 
-    - name: get apt-cache show package
-      if: env.test == 'true'
-      run: | 
-        mkdir show
-        mkdir showpkg
-        mkdir rdepends
-        mkdir depends
-        for i in $(cat list.txt); do sudo -E apt-cache show $i 2>>/dev/null >>./show/$i.txt ;done        
-        for i in $(cat list.txt); do sudo -E apt-cache showpkg $i 2>>/dev/null >>./showpkg/$i.txt ;done
-        for i in $(cat list.txt); do sudo -E apt-cache rdepends $i 2>>/dev/null >>./rdepends/$i.txt ;done
-        for i in $(cat list.txt); do sudo -E apt-cache depends $i 2>>/dev/null >>./depends/$i.txt ;done
+      - name: list root file system
+        continue-on-error: true
+        if: env.all_test == 'true'
+        run: |
+          sudo -E du -x / 2>>/dev/null 1>>du.txt
 
-    - name: remove apt package
-      continue-on-error: true
-      if: env.auto_test == 'true'
-      run: |
-        sudo bash 2.sh
+      - name: list installed apt package and get package detail
+        continue-on-error: true
+        run: |
+          #for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
+          #for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list_mod.txt; done
+          sudo bash 1.sh
 
-    - name: Install wireguard
-      run: sudo -E apt-get install wireguard openresolv
+      - name: get apt-cache show package
+        if: env.test == 'true'
+        run: |
+          mkdir show
+          mkdir showpkg
+          mkdir rdepends
+          mkdir depends
+          for i in $(cat list.txt); do sudo -E apt-cache show $i 2>>/dev/null >>./show/$i.txt ;done        
+          for i in $(cat list.txt); do sudo -E apt-cache showpkg $i 2>>/dev/null >>./showpkg/$i.txt ;done
+          for i in $(cat list.txt); do sudo -E apt-cache rdepends $i 2>>/dev/null >>./rdepends/$i.txt ;done
+          for i in $(cat list.txt); do sudo -E apt-cache depends $i 2>>/dev/null >>./depends/$i.txt ;done
 
-    - name: Install zerotier one
-      run: curl -s https://install.zerotier.com | sudo bash
+      - name: remove apt package
+        continue-on-error: true
+        if: env.auto_test == 'true'
+        run: |
+          sudo bash 2.sh
 
-    - name: join network Id
-      run: sudo zerotier-cli join ${{ secrets.NETWORK_ID }}
+      - name: Install wireguard
+        run: sudo -E apt-get install wireguard openresolv
 
-    - name: orbit moon
-      if: env.moon == 'true'
-      run: sudo zerotier-cli orbit ${{ secrets.MOON_ID }} ${{ secrets.MOON_ID }}
+      - name: Install zerotier one
+        run: curl -s https://install.zerotier.com | sudo bash
 
-    - name: Update system
-      if: env.update_system == 'true'
-      run: |
-        sudo -E apt update
-        sudo -E apt full-upgrade
-        sudo -E apt-get install lrzsz
+      - name: join network Id
+        run: sudo zerotier-cli join ${{ secrets.NETWORK_ID }}
 
-    - name: Create wireguard tunnel configuration
-      run: |
-        sed -i -e "s@{{WIREGUARD_PRIVATE_KEY}}@${{ secrets.WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{WIREGUARD_SERVER_PUBLIC_KEY}}@${{ secrets.WIREGUARD_SERVER_PUBLIC_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        #sed -i -e "s@{{WIREGUARD_PRESHARED_KEY}}@${{ secrets.WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{WIREGUARD_SERVER_ENDPOINT}}@${{ secrets.WIREGUARD_SERVER_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{WIREGUARD_ADDRESS}}@${{ secrets.WIREGUARD_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sed -i -e "s@{{WIREGUARD_ALLOWEDIPS}}@${{ secrets.WIREGUARD_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
-        sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
+      - name: orbit moon
+        if: env.moon == 'true'
+        run: sudo zerotier-cli orbit ${{ secrets.MOON_ID }} ${{ secrets.MOON_ID }}
 
-    - name: Connect wireguard
-      run: |
-        wg-quick up tunnel
-        #wg-quick down tunnel
+      - name: Update system
+        if: env.update_system == 'true'
+        run: |
+          sudo -E apt update
+          sudo -E apt full-upgrade
+          sudo -E apt-get install lrzsz
 
-    - name: wireguard automate
-      if: env.auto_wireguard == 'true'
-      run: |
-        echo dmesg
-        sudo systemctl enable wg-quick@tunnel
-        
-    - name: check /root/.ssh directory
-      run: |
-        if [ ! /root  ]; then sudo mkdir /root; fi
-        if [ ! /root/.ssh ]; then sudo mkdir /root/.ssh; fi
+      - name: Create wireguard tunnel configuration
+        run: |
+          sed -i -e "s@{{WIREGUARD_PRIVATE_KEY}}@${{ secrets.WIREGUARD_PRIVATE_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_SERVER_PUBLIC_KEY}}@${{ secrets.WIREGUARD_SERVER_PUBLIC_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+          #sed -i -e "s@{{WIREGUARD_PRESHARED_KEY}}@${{ secrets.WIREGUARD_PRESHARED_KEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_SERVER_ENDPOINT}}@${{ secrets.WIREGUARD_SERVER_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_ADDRESS}}@${{ secrets.WIREGUARD_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_ALLOWEDIPS}}@${{ secrets.WIREGUARD_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
 
-    - name: sshd public add and fix permission
-      run: |
-        echo ${{ secrets.SSH_PUBLIC_KEY }} | sudo tee -a /root/.ssh/authorized_keys
-        sudo chmod 0600 /root/.ssh/authorized_keys
+      - name: Connect wireguard
+        run: |
+          wg-quick up tunnel
+          #wg-quick down tunnel
 
-    - name: Fixup home directory permissions
-      run: |
-        sudo chown runner:runner /home/runner
-        sudo chmod o-rwx -R /home/runner
-        sudo chmod g-rwx -R /home/runner
+      - name: wireguard automate
+        if: env.auto_wireguard == 'true'
+        run: |
+          echo dmesg
+          sudo systemctl enable wg-quick@tunnel
 
-    - name: Fixup root directory permissions
-      run: |
-        sudo chown root:root /root
-        sudo chmod o-rwx -R /root
-        sudo chmod g-rwx -R /root
+      - name: check /root/.ssh directory
+        run: |
+          if [ ! /root  ]; then sudo mkdir /root; fi
+          if [ ! /root/.ssh ]; then sudo mkdir /root/.ssh; fi
 
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@main
-      if: env.SSH_ACTIONS == 'true'
+      - name: sshd public add and fix permission
+        run: |
+          echo ${{ secrets.SSH_PUBLIC_KEY }} | sudo tee -a /root/.ssh/authorized_keys
+          sudo chmod 0600 /root/.ssh/authorized_keys
 
-    - name: run machine by tail
-      if: env.SSH_ACTIONS == 'false'
-      run: |
-        df -m
-        sudo cp $(which echo)  /run/echo
-        sudo cp $(which sleep) /run/sleep
-        while true; do /run/sleep 30;done
+      - name: Fixup home directory permissions
+        run: |
+          sudo chown runner:runner /home/runner
+          sudo chmod o-rwx -R /home/runner
+          sudo chmod g-rwx -R /home/runner
+
+      - name: Fixup root directory permissions
+        run: |
+          sudo chown root:root /root
+          sudo chmod o-rwx -R /root
+          sudo chmod g-rwx -R /root
+
+      - name: SSH connection to Actions
+        uses: P3TERX/ssh2actions@main
+        if: env.SSH_ACTIONS == 'true'
+
+      - name: run machine by tail
+        if: env.SSH_ACTIONS == 'false'
+        run: |
+          df -m
+          sudo cp $(which echo)  /run/echo
+          sudo cp $(which sleep) /run/sleep
+          sudo cp $(which df) /run/df
+          while true; do /run/sleep 30; df -m;done
