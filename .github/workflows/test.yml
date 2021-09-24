@@ -19,9 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install wireguard
-        run: sudo -E apt-get install wireguard openresolv
-        
       - name: list root file system
         continue-on-error: true
         if: env.all_test == 'true'
@@ -53,6 +50,9 @@ jobs:
         run: |
           sudo bash 2.sh
 
+      - name: Install wireguard
+        run: sudo -E apt-get install wireguard openresolv
+        
       - name: remove docker images
         if: env.auto_test == 'true'
         run: sudo docker rmi -f $(docker images -a -q)
@@ -100,7 +100,6 @@ jobs:
       - name: remove /usr/share/rust
         if: env.auto_test == 'true'
         run: sudo rm -rf /usr/share/rust
-
 
       - name: Install zerotier one
         run: curl -s https://install.zerotier.com | sudo bash
