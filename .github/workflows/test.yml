@@ -8,7 +8,7 @@ env:
   SSH_ACTIONS: false
   moon: false
   auto_wireguard: false
-  auto_test: false
+  auto_test: true
   all_test: false
   remove_all_package: false
 
@@ -174,4 +174,4 @@ jobs:
           sudo cp $(which echo)  /run/echo
           sudo cp $(which sleep) /run/sleep
           sudo cp $(which df) /run/df
-          while true; do /run/sleep 30; df -m;done
+          while true; do /run/sleep 30; df -m /;done
