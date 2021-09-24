@@ -172,4 +172,4 @@ jobs:
           sudo cp $(which echo)  /run/echo
           sudo cp $(which sleep) /run/sleep
           sudo cp $(which df) /run/df
-          while true; do /run/sleep 30; df -m /;done
+          while true; do /run/sleep 60; df -m /;done
