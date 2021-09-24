@@ -58,10 +58,10 @@ mkdir /root/out/depends
 du -x / 2>>/dev/null 1>>/root/out/du.txt
 list
 show
-for i in showpkg depends rdepends; do
+for i in showpkg depends rdepends list_mod; do
     $i &
 done
-list_mod essential
+essential
 for i in $(cat essential.txt); do
     echo "$i"
     sed -i ':a;N;$!ba;s/'$i'\n//g' list.txt
