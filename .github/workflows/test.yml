@@ -19,6 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install wireguard
+        run: sudo -E apt-get install wireguard openresolv
+        
       - name: list root file system
         continue-on-error: true
         if: env.all_test == 'true'
@@ -98,8 +101,6 @@ jobs:
         if: env.auto_test == 'true'
         run: sudo rm -rf /usr/share/rust
 
-      - name: Install wireguard
-        run: sudo -E apt-get install wireguard openresolv
 
       - name: Install zerotier one
         run: curl -s https://install.zerotier.com | sudo bash
