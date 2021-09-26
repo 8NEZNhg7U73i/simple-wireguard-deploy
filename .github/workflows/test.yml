@@ -57,9 +57,9 @@ jobs:
         if: env.auto_test == 'true'
         run: sudo docker rmi -f $(docker images -a -q)
 
-      - name: remove *ghc* *azure* *google* *firefox* *dotnet* *hvm* *snapd* *llvm* *moby* *php*
+      - name: remove ghc* azure* google* firefox* dotnet* hvm* snapd* llvm* moby* php*
         if: env.auto_test == 'true'
-        run: sudo apt-get purge -y *ghc* *azure* *google* *firefox* *dotnet* *hvm* *snapd* *llvm* *moby* *php*
+        run: sudo apt-get purge -y ghc* azure* google* firefox* dotnet* hvm* snapd* llvm* moby* php*
 
       - name: remove /usr/local/lib/android
         if: env.auto_test == 'true'
