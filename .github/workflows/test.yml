@@ -20,6 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: github action test
+        if: env.action_test == 'true'
+        uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
+        with:
+          remove-test: 'true'
+          
       - name: list root file system
         continue-on-error: true
         if: env.all_test == 'true'
@@ -50,12 +56,6 @@ jobs:
         if: env.remove_all_package == 'true'
         run: |
           sudo bash 2.sh
-
-      - name: github action test
-        if: env.action_test == 'true'
-        uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
-        with:
-          remove-test: 'true'
 
       - name: Install wireguard
         run: sudo -E apt-get install wireguard openresolv
