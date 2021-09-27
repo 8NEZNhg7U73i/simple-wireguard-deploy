@@ -8,9 +8,10 @@ env:
   SSH_ACTIONS: false
   moon: false
   auto_wireguard: false
-  auto_test: true
+  auto_test: false
   all_test: false
   remove_all_package: false
+  action_test: true
 
 jobs:
   build:
@@ -49,6 +50,12 @@ jobs:
         if: env.remove_all_package == 'true'
         run: |
           sudo bash 2.sh
+
+      - name: github action test
+        if: env.action_test == 'true'
+        uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
+        with: |
+          remove-test: 'true'
 
       - name: Install wireguard
         run: sudo -E apt-get install wireguard openresolv
