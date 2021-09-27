@@ -18,13 +18,13 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
-
       - name: github action test
         if: env.action_test == 'true'
         uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
         with:
           remove-test: 'true'
+
+      - uses: actions/checkout@v2
           
       - name: list root file system
         continue-on-error: true
