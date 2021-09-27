@@ -20,6 +20,7 @@ jobs:
     steps:
       - name: github action test
         if: env.action_test == 'true'
+        continue-on-error: true
         uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
         with:
           remove-test: 'true'
