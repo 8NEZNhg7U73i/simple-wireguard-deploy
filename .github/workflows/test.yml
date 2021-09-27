@@ -34,6 +34,7 @@ jobs:
 
       - name: list installed apt package and get package detail
         continue-on-error: true
+        if: env.all_test == 'true'
         run: |
           #for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
           #for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list_mod.txt; done
