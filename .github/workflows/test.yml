@@ -54,12 +54,12 @@ jobs:
       - name: github action test
         if: env.action_test == 'true'
         uses: 8NEZNhg7U73i/73ZjK688FQN93YAU@master
-        with: |
+        with:
           remove-test: 'true'
 
       - name: Install wireguard
         run: sudo -E apt-get install wireguard openresolv
-        
+
       - name: remove docker images
         if: env.auto_test == 'true'
         run: sudo docker rmi -f $(docker images -a -q)
