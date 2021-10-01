@@ -39,6 +39,7 @@ jobs:
         run: |
           #for i in $(sudo -E apt list 2>/dev/null | grep -e "installed" | awk -F '/' '{print $1}'); do sudo -E echo $i >>list.txt; done
           #for i in $(cat list.txt); do echo $i,$(echo $i| grep -o "-" | grep -c "-") >>list_mod.txt; done
+          sudo -E dpkg-query -W -f='${Package}\n' 2>/dev/null 1>>list.txt
           sudo bash 1.sh
 
       - name: get apt-cache show package
